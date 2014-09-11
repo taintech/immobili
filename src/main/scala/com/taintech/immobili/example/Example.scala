@@ -3,6 +3,8 @@ package com.taintech.immobili.example
 import org.openqa.selenium.By
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
+import scala.collection.JavaConverters._
+
 /**
  * Author: Rinat Tainov
  * Email: rinat@tainov.com
@@ -10,13 +12,16 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
  * Time: 10:45 AM
  */
 object Example {
-  def main(args: Array[String]): Unit ={
-    val driver  = new HtmlUnitDriver()
+  def main(args: Array[String]): Unit = {
+    val driver = new HtmlUnitDriver()
     driver.get("http://www.google.com")
     val element = driver.findElement(By.name("q"))
     element.sendKeys("Cheese!")
     element.submit()
-    println(driver.getTitle)
+    val results = driver.findElementsByCssSelector(".g").asScala
+    results.foreach { e =>
+      Console println e.findElement(By.tagName("h3")).getText
+    }
     driver.quit()
   }
 }
