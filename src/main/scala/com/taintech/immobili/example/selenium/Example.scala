@@ -1,4 +1,4 @@
-package com.taintech.immobili.example
+package com.taintech.immobili.example.selenium
 
 import org.openqa.selenium.By
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
