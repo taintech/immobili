@@ -6,3 +6,7 @@ http://olx.kz/
 http://irr.kz/
 http://centrprodazh.kz/
 http://www.krn.kz/
+
+External Dependency
+
+export SBT_OPTS="-Dwebdriver.chrome.driver="C:\development\env\chromedriver\chromedriver.exe"
