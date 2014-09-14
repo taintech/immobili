@@ -14,6 +14,8 @@ libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.6"
 
 libraryDependencies += "org.seleniumhq.selenium" % "selenium-server" % "2.43.1"
 
+libraryDependencies += "org.jsoup" % "jsoup" % "1.7.3"
+
 ideaExcludeFolders += ".idea"
 
 ideaExcludeFolders += ".idea_modules"
