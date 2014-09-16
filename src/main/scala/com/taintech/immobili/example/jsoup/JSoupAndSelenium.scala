@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
  * Time: 11:00 PM
  */
 object JSoupAndSelenium {
-  def main(args: Array[String]): Unit ={
+  def main(args: Array[String]): Unit = {
     val driver = new HtmlUnitDriver()
     driver.get("http://krisha.kz/")
     val doc = Jsoup.parse(driver.getPageSource)

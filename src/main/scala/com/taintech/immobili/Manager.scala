@@ -1,6 +1,7 @@
 package com.taintech.immobili
 
 import akka.actor.{Props, Actor}
+import akka.routing.RoundRobinPool
 import com.taintech.immobili.Crawler.Request
 import com.taintech.immobili.db.Keeper
 import com.taintech.immobili.krisha.Listing
@@ -14,21 +15,15 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
  */
 class Manager extends Actor{
   import Manager._
-
   override def preStart(): Unit ={
-    val driver = new HtmlUnitDriver()
-    val keeper = context.actorOf(Props[Keeper], "keeper")
-    val parser = new Listing
-    val crawler = context.actorOf(Props(classOf[Crawler], driver, keeper, parser), "crawler")
-    crawler ! new Request("http://krisha.kz/prodazha/kvartiry/astana/")
+    val crawler = context.actorOf(RoundRobinPool(NUMBER_OF_CRAWLERS).props(Crawler.props), "crawler")
   }
-
-  override def receive = {
-    case End => context.stop(self)
+  override def receive: Unit ={
+    case FINISH => context.stop(self)
   }
 }
 
-object Manager{
-  object Start
-  object End
+object Manager {
+  object FINISH
+  val NUMBER_OF_CRAWLERS = 5
 }
