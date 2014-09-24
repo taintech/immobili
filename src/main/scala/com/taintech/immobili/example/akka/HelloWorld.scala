@@ -1,7 +1,6 @@
 package com.taintech.immobili.example.akka
 
-import akka.actor.Actor
-import akka.actor.Props
+import akka.actor.{Actor, Props}
 
 class HelloWorld extends Actor {
 

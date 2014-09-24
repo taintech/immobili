@@ -1,6 +1,6 @@
 package com.taintech.immobili.krisha
 
-import akka.actor.{ActorLogging, Props, ActorRef, Actor}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.taintech.immobili.krisha.Crawler.Request
 import com.taintech.immobili.krisha.Parser.PageType.PageType
 import org.jsoup.Jsoup
@@ -12,16 +12,16 @@ import org.jsoup.Jsoup
  * Time: 6:26 PM
  */
 class Parser(manager: ActorRef, crawler: ActorRef) extends Actor with ActorLogging{
-  import Parser._
-  import PageType._
+  import com.taintech.immobili.krisha.Parser.PageType._
+  import com.taintech.immobili.krisha.Parser._
 
   override def receive = {
     case Start =>
-      log.info("[Parser] received start message.")
+      log.info("Received start message.")
       crawler ! Request("http://krisha.kz/arenda/kvartiry/astana/", Listing)
     case Page(body, pageType) =>
       val first = Jsoup.parse(body).select(".title").first().select("a").first().text()
-      log.info(s"[Parser] parsed first $first")
+      log.info(s"Parsed first $first")
       manager ! Done
   }
 

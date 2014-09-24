@@ -9,7 +9,7 @@ import akka.actor.Actor
  * Time: 4:32 PM
  */
 class Keeper extends Actor {
-  import Keeper._
+  import com.taintech.immobili.db.Keeper._
 
   override def receive = {
     case Record(data) => ???

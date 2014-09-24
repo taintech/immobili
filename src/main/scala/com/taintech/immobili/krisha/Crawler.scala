@@ -1,6 +1,6 @@
 package com.taintech.immobili.krisha
 
-import akka.actor.{ActorLogging, Actor, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import com.taintech.immobili.krisha.Parser.Page
 import com.taintech.immobili.krisha.Parser.PageType.PageType
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -17,7 +17,7 @@ class Crawler(driver: HtmlUnitDriver) extends Actor  with ActorLogging{
 
   override def receive = {
     case Request(url, pageType) =>
-      log.info(s"[Crawler] get url $url")
+      log.info(s"Get url $url.")
       driver.get(url)
       sender() ! Page(driver.getPageSource, pageType)
   }

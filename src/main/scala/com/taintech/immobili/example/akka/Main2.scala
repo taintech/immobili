@@ -1,11 +1,6 @@
 package com.taintech.immobili.example.akka
 
-import akka.actor.ActorSystem
-import akka.actor.Props
-import akka.actor.ActorRef
-import akka.actor.Actor
-import akka.actor.ActorLogging
-import akka.actor.Terminated
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props, Terminated}
 
 object Main2 {
 
