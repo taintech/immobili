@@ -16,6 +16,8 @@ libraryDependencies += "org.seleniumhq.selenium" % "selenium-server" % "2.43.1"
 
 libraryDependencies += "org.jsoup" % "jsoup" % "1.7.3"
 
+libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.3.5"
+
 ideaExcludeFolders += ".idea"
 
 ideaExcludeFolders += ".idea_modules"
