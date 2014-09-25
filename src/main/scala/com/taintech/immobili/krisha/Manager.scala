@@ -2,7 +2,6 @@ package com.taintech.immobili.krisha
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.routing.RoundRobinPool
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 /**
  * Author: Rinat Tainov

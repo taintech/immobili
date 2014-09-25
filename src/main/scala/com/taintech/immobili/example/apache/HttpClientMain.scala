@@ -15,6 +15,8 @@ object HttpClientMain {
     val client: HttpClient  =  HttpClientBuilder.create().build()
     val request = new HttpGet("http://127.0.0.1:5984/")
     val response = client.execute(request)
+    //HttpStatus.SC_OK
+    Console println s"Response code: ${response.getStatusLine.getStatusCode}"
     Console println scala.io.Source.fromInputStream(response.getEntity.getContent).getLines().mkString("\n")
   }
 }

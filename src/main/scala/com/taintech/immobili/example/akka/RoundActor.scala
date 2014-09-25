@@ -1,6 +1,6 @@
 package com.taintech.immobili.example.akka
 
-import akka.actor.{ActorLogging, Props, Actor}
+import akka.actor.{Actor, ActorLogging, Props}
 
 /**
  * Author: Rinat Tainov
