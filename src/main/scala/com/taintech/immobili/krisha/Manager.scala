@@ -1,6 +1,7 @@
 package com.taintech.immobili.krisha
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
+import akka.routing.RoundRobinPool
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 /**
@@ -13,8 +14,7 @@ class Manager extends Actor with ActorLogging{
 
   override def preStart() = {
     log.info("Starting crawler...")
-    val driver = new HtmlUnitDriver()
-    val crawler = context.actorOf(Crawler.props(driver), "crawler")
+    val crawler = context.actorOf(RoundRobinPool(10).props(Crawler.props), "crawler")
     log.info("Started crawler.")
     val parser: ActorRef = context.actorOf(Parser.props(self, crawler), "parser")
     parser ! Parser.Start

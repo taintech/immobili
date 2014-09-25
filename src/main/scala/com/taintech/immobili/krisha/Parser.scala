@@ -1,8 +1,7 @@
 package com.taintech.immobili.krisha
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import com.taintech.immobili.krisha.Crawler.Request
-import com.taintech.immobili.krisha.Parser.PageType.PageType
+import com.taintech.immobili.krisha.Crawler.{Request, Response}
 import org.jsoup.Jsoup
 
 /**
@@ -19,7 +18,7 @@ class Parser(manager: ActorRef, crawler: ActorRef) extends Actor with ActorLoggi
     case Start =>
       log.info("Received start message.")
       crawler ! Request("http://krisha.kz/arenda/kvartiry/astana/", Listing)
-    case Page(body, pageType) =>
+    case Response(Request(url, pageType), body) =>
       val first = Jsoup.parse(body).select(".title").first().select("a").first().text()
       log.info(s"Parsed first $first")
       manager ! Done
@@ -35,5 +34,14 @@ object Parser {
     type PageType = Value
     val Listing, Profile = Value
   }
-  case class Page(body: String, pageType: PageType)
+  val Root = "http://krisha.kz"
+  val Actions = List("arenda", "prodazha")
+  val Cities = List("astana", "almaty")
+  val Types = List("kvartiry", "doma", "dachi", "uchastkov", "ofisa")
+  val ListRootUrl = for {
+    action <- Actions
+    category <- Types
+    city <- Cities
+  } yield s"$Root/$action/$category/$city"
+
 }
