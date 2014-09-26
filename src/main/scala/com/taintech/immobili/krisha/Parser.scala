@@ -17,18 +17,26 @@ class Parser(manager: ActorRef, crawler: ActorRef) extends Actor with ActorLoggi
   override def receive = {
     case Start =>
       log.info("Received start message.")
-      crawler ! Request("http://krisha.kz/arenda/kvartiry/astana/", Listing)
-    case Response(Request(url, pageType), body) =>
-      val first = Jsoup.parse(body).select(".title").first().select("a").first().text()
-      log.info(s"Parsed first $first")
-      manager ! Done
+      ListRootUrls.foreach{ url =>
+        crawler ! Request(url, Listing)
+        manager ! Started
+      }
+    case Response(Request(url, pageType), body) => pageType match {
+      case Listing => ???
+      case Profile => ???
+    }
   }
 
+  private def next(url: String) = {
+    val nextPage = url.replaceFirst(".*page=", "").toInt
+    url.replaceFirst("page=\\d*", s"page=$nextPage")
+  }
 }
 
 object Parser {
   def props(manager: ActorRef, crawler: ActorRef): Props = Props(new Parser(manager, crawler))
   object Start
+  object Started
   object Done
   object PageType extends Enumeration{
     type PageType = Value
@@ -38,10 +46,10 @@ object Parser {
   val Actions = List("arenda", "prodazha")
   val Cities = List("astana", "almaty")
   val Types = List("kvartiry", "doma", "dachi", "uchastkov", "ofisa")
-  val ListRootUrl = for {
+  val ListRootUrls = for {
     action <- Actions
     category <- Types
     city <- Cities
-  } yield s"$Root/$action/$category/$city"
+  } yield s"$Root/$action/$category/$city/?page=1"
 
 }

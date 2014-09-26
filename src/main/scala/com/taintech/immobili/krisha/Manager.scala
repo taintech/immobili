@@ -10,6 +10,8 @@ import akka.routing.RoundRobinPool
  * Time: 7:41 PM
  */
 class Manager extends Actor with ActorLogging{
+  
+  private var count = 0
 
   override def preStart() = {
     log.info("Starting crawler...")
@@ -20,6 +22,8 @@ class Manager extends Actor with ActorLogging{
   }
 
   override def receive = {
+    case Parser.Started => count = count + 1
+    case Parser.Done if count > 1 => count = count - 1
     case Parser.Done =>
       log.info("Done message from parser.")
       context.stop(self)
