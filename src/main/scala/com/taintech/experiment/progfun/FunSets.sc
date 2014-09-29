@@ -1,4 +1,4 @@
-object a {
+object intsets {
 
   val t1 = new NonEmpty(3)
   val t2 = t1.incl(2)
