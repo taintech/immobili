@@ -1,4 +1,4 @@
-package com.taintech.experiments.cake
+package com.taintech.experiment.cake
 
 class Production extends Dummy with A with B {
 
