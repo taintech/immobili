@@ -11,6 +11,7 @@ import com.taintech.immobili.krisha.Manager
  */
 object Main {
   def main(args: Array[String]): Unit ={
+
     val system = ActorSystem("KrishaCrawler")
     val manager = system.actorOf(Props[Manager], "manager")
     system.actorOf(Props(classOf[Terminator], manager), "terminator")
