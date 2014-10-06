@@ -27,6 +27,7 @@ class Parser(manager: ActorRef, crawler: ActorRef, keeper: ActorRef) extends Act
           summaries.foreach(s => keeper ! s)
           urls.foreach(u => crawler ! Request(u, Profile))
           next.foreach(n => crawler ! Request(n, Profile))
+          if (next.isEmpty) manager ! Done
       }
       case Profile => keeper ! parseBody(body)
     }
@@ -57,8 +58,8 @@ object Parser {
     city <- Cities
   } yield s"$Root/$action/$category/$city/?page=1"
 
-  def parseBody(body: String): String = ???
+  def parseBody(body: String): String = ???                //TODO
 
   case class ParsedList(next: Option[String], summaries: List[String], profileUrls: List[String])
-  def parseList(body: String): ParsedList = ???
+  def parseList(body: String): ParsedList = ParsedList(None, List("hello world"), List.empty) //TODO
 }

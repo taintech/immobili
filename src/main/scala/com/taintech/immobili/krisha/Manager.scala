@@ -1,6 +1,6 @@
 package com.taintech.immobili.krisha
 
-import akka.actor.{Actor, ActorLogging, ActorRef}
+import akka.actor.{Props, Actor, ActorLogging, ActorRef}
 import akka.routing.RoundRobinPool
 
 /**
@@ -17,7 +17,8 @@ class Manager extends Actor with ActorLogging{
     log.info("Starting crawler...")
     val crawler = context.actorOf(RoundRobinPool(10).props(Crawler.props), "crawler")
     log.info("Started crawler.")
-    val parser: ActorRef = context.actorOf(Parser.props(self, crawler, ???), "parser")
+    val keeper = context.actorOf(RoundRobinPool(10).props(Props[Keeper]), "keeper")
+    val parser: ActorRef = context.actorOf(Parser.props(self, crawler, keeper), "parser")
     parser ! Parser.Start
   }
 
@@ -29,6 +30,12 @@ class Manager extends Actor with ActorLogging{
       context.stop(self)
   }
 
-  private def increment() = count = count + 1
-  private def decrement() = count = count - 1
+  private def increment() = {
+    log.info(s"Start count up, remains: $count")
+    count = count + 1
+  }
+  private def decrement() = {
+    log.info(s"Done count down, remains: $count")
+    count = count - 1
+  }
 }
