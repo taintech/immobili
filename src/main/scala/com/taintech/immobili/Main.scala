@@ -21,7 +21,7 @@ object Main {
     context watch ref
     def receive = {
       case Terminated(_) =>
-        log.info("Terminated message, shutting down system.", ref.path)
+        log.info("{} Terminated message, shutting down system.", ref.path)
         context.system.shutdown()
     }
   }
