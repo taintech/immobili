@@ -1,6 +1,6 @@
 package com.taintech.immobili.krisha
 
-import akka.actor.Actor
+import akka.actor.{ActorLogging, Actor}
 
 /**
  * Author: Rinat Tainov
@@ -8,10 +8,10 @@ import akka.actor.Actor
  * Date: 10/7/14
  * Time: 1:27
  */
-class Keeper extends Actor {
+class Keeper extends Actor with ActorLogging{
 
   override def receive = {
-    case s: String => Console println s //TODO
+    case s: String => log.info(s)
   }
 
 }

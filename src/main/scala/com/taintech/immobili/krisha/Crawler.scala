@@ -19,6 +19,7 @@ class Crawler(driver: HtmlUnitDriver) extends Actor  with ActorLogging{
       log.info(s"Get url $url.")
       driver.get(url)
       sender() ! Response(req, driver.getPageSource)
+      driver.close()
   }
 
   override def postStop() = {

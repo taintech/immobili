@@ -2,7 +2,12 @@ package com.taintech.immobili.krisha
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.taintech.immobili.krisha.Crawler.{Request, Response}
+import org.joda.time.LocalDate
 import org.jsoup.Jsoup
+import org.jsoup.nodes.{Element, Document}
+import org.jsoup.select.Elements
+
+import scala.collection.JavaConverters._
 
 /**
  * Author: Rinat Tainov
@@ -14,6 +19,9 @@ class Parser(manager: ActorRef, crawler: ActorRef, keeper: ActorRef) extends Act
   import com.taintech.immobili.krisha.Parser.PageType._
   import com.taintech.immobili.krisha.Parser._
 
+  val today = LocalDate.now()
+  val yesterday = today.minusDays(1).getDayOfMonth
+
   override def receive = {
     case Start =>
       log.info("Received start message.")
@@ -22,19 +30,45 @@ class Parser(manager: ActorRef, crawler: ActorRef, keeper: ActorRef) extends Act
         manager ! Started
       }
     case Response(Request(url, pageType), body) => pageType match {
-      case Listing => parseList(body) match {
+      case Listing => parseList(body, url) match {
         case ParsedList(next, summaries, urls) =>
           summaries.foreach(s => keeper ! s)
           urls.foreach(u => crawler ! Request(u, Profile))
-          next.foreach(n => crawler ! Request(n, Profile))
+          next.foreach(n => crawler ! Request(n, Listing))
           if (next.isEmpty) manager ! Done
       }
       case Profile => keeper ! parseBody(body)
     }
   }
 
-  private def next(url: String) = {
-    val nextPage = url.replaceFirst(".*page=", "").toInt
+
+  private[this] def parseBody(body: String): String = ???  //TODO
+
+
+  private[this] def itemSummaries(doc: Document) = doc.select(".descr")
+
+  private[this] def nextOpt(elements: List[Element], url: String): Option[String] = try {
+    if(elements.exists(dated(yesterday))) None
+    else Some(next(url))
+  } catch{
+    case e: Exception =>
+      log.warning(e.getMessage)
+      None
+  }
+
+  private[this] def dated(day: Int)(element: Element): Boolean =
+    element.select("span.gray").last().text.startsWith(today.getDayOfMonth.toString)
+
+  private[this] def profileUrls(elements: List[Element]): List[String] = List.empty //TODO
+
+  private[this] def parseList(body: String, url: String) = {
+    val doc = Jsoup.parse(body)
+    val items = itemSummaries(doc)
+    ParsedList(nextOpt(items, url), items, profileUrls(items))
+  }
+
+  private[this] def next(url: String) = {
+    val nextPage = url.replaceFirst(".*page=", "").toInt + 1
     url.replaceFirst("page=\\d*", s"page=$nextPage")
   }
 }
@@ -51,15 +85,17 @@ object Parser {
   val Root = "http://krisha.kz"
   val Actions = List("arenda", "prodazha")
   val Cities = List("astana", "almaty")
-  val Types = List("kvartiry", "doma", "dachi", "uchastkov", "ofisa")
+  val Types = List("kvartiry")
   val ListRootUrls = for {
     action <- Actions
     category <- Types
     city <- Cities
   } yield s"$Root/$action/$category/$city/?page=1"
 
-  def parseBody(body: String): String = ???                //TODO
-
   case class ParsedList(next: Option[String], summaries: List[String], profileUrls: List[String])
-  def parseList(body: String): ParsedList = ParsedList(None, List("hello world"), List.empty) //TODO
+
+  def toStringList(elements: Elements) = elements.asScala.map(_.html()).toList
+  def toElementList(elements: Elements) = elements.asScala.toList
+  implicit def elementsToStringList(elements: Elements): List[String] = toStringList(elements)
+  implicit def elementsToElementList(elements: Elements): List[Element] = toElementList(elements)
 }
