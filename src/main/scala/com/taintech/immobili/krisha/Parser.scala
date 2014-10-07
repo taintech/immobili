@@ -47,8 +47,10 @@ class Parser(manager: ActorRef, crawler: ActorRef, keeper: ActorRef) extends Act
 
   private[this] def itemSummaries(doc: Document) = doc.select(".descr")
 
-  private[this] def nextOpt(elements: List[Element], url: String): Option[String] = try {
-    if(elements.exists(outdated)) None
+  private[this] def nextOpt(doc: Document, url: String): Option[String] = try {
+    if (doc.select(".descr span.gray.air").asScala
+      .map(_.text).filterNot(e => e.contains("просм")).exists(e=>e.startsWith(old.dayOfMonth().get().toString)))
+      None
     else Some(next(url))
   } catch{
     case e: Exception =>
@@ -64,7 +66,7 @@ class Parser(manager: ActorRef, crawler: ActorRef, keeper: ActorRef) extends Act
   private[this] def parseList(body: String, url: String) = {
     val doc = Jsoup.parse(body)
     val items = itemSummaries(doc)
-    ParsedList(nextOpt(items, url), items, profileUrls(items))
+    ParsedList(nextOpt(doc, url), items, profileUrls(items))
   }
 
   private[this] def next(url: String) = {

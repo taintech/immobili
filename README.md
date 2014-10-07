@@ -1,3 +1,5 @@
+//TODO stub to work online and test parsers
+
 immobili
 ========
 http://krisha.kz/
