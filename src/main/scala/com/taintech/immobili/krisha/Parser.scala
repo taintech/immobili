@@ -20,7 +20,7 @@ class Parser(manager: ActorRef, crawler: ActorRef, keeper: ActorRef) extends Act
   import com.taintech.immobili.krisha.Parser._
 
   val today = LocalDate.now()
-  val yesterday = today.minusDays(1).getDayOfMonth
+  val old = today.minusDays(1)
 
   override def receive = {
     case Start =>
@@ -48,16 +48,16 @@ class Parser(manager: ActorRef, crawler: ActorRef, keeper: ActorRef) extends Act
   private[this] def itemSummaries(doc: Document) = doc.select(".descr")
 
   private[this] def nextOpt(elements: List[Element], url: String): Option[String] = try {
-    if(elements.exists(dated(yesterday))) None
+    if(elements.exists(outdated)) None
     else Some(next(url))
   } catch{
     case e: Exception =>
-      log.warning(e.getMessage)
+      log.error(e, "Achtung!")
       None
   }
 
-  private[this] def dated(day: Int)(element: Element): Boolean =
-    element.select("span.gray").last().text.startsWith(today.getDayOfMonth.toString)
+  private[this] def outdated(element: Element): Boolean =
+    element.select("span.gray").last().text.startsWith(old.dayOfMonth().get().toString)
 
   private[this] def profileUrls(elements: List[Element]): List[String] = List.empty //TODO
 

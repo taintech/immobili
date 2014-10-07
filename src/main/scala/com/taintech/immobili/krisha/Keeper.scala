@@ -11,7 +11,7 @@ import akka.actor.{ActorLogging, Actor}
 class Keeper extends Actor with ActorLogging{
 
   override def receive = {
-    case s: String => log.info(s)
+    case s: String => log.info(s.take(50))
   }
 
 }
